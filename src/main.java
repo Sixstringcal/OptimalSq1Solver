@@ -1,13 +1,30 @@
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Scanner;
 
 public class main {
     static Square1 adjadj = new Square1();
     static int[] solvedState;
     static String[] moves = new String[121];
+    static String algorithm = "";
+    static int[] skipable;
 
 
     public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Please enter your algorithm:\n");
+        algorithm = scanner.nextLine();
+        System.out.println("Pieces to ignore?:\n");
+        String[] preparse = scanner.nextLine().split(",");
+        skipable = new int[preparse.length];
+        for (int i = 0; i < preparse.length; i++) {
+            skipable[i] = Integer.parseInt(preparse[i]);
+        }
+        System.out.println("how many slices would you like to cut it off at?");
+        int maximum = scanner.nextInt();
+
+
         int moveIndex = 0;
         for (int i = -5; i < 6; i++) {
             for (int j = -5; j < 6; j++) {
@@ -17,15 +34,15 @@ public class main {
         }
         solvedState = adjadj.getState();
         try {
-            adjadj.doMoves("1,0/2,-1/1,1/-3,0/-1,0");
+            adjadj.doMoves(algorithm); // like this 1,0/2,-1/1,1/-3,0/-1,0
         } catch (Exception e) {
 
         }
-        first(adjadj, 4, "");
+        first(adjadj, maximum, "");
         System.out.println("no");
     }
 
-    public static void print(String thing){
+    public static void print(String thing) {
         System.out.println();
     }
 
@@ -76,10 +93,21 @@ public class main {
         }
     }
 
+    public static boolean contains(int[] a, int b) {
+        for (int i = 0; i < a.length; i++) {
+            if (a[i] == b) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static boolean equate(int[] a, int[] b) {
         for (int i = 0; i < a.length; i++) {
-            if (a[i] != b[i]) {
-                return false;
+            if (!contains(skipable, a[i])) {
+                if (a[i] != b[i]) {
+                    return false;
+                }
             }
         }
         return true;
